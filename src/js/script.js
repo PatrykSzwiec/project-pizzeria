@@ -123,7 +123,7 @@
 
     initOrderForm(){
       const thisProduct = this;
-      
+
       thisProduct.form.addEventListener('submit', function(event){
         event.preventDefault();
         thisProduct.processOrder();
@@ -139,13 +139,50 @@
         event.preventDefault();
         thisProduct.processOrder();
       });
-      console.log('initOrderForm:', thisProduct);
+      //console.log('initOrderForm:', thisProduct);
     }
 
     processOrder(){
       const thisProduct = this;
-      
-      console.log('processOrder:', thisProduct);
+
+      // covert form to object structure e.g. {sauce: ['tomato], toppings: ['olives', 'redPeppers']}
+      const formData = utils.serializeFormToObject(thisProduct.form);
+      //console.log('formData', formData);
+
+      // set price to default price
+      let price = thisProduct.data.price;
+
+      // LOOP for every category (param)....
+      for(let paramId in thisProduct.data.params) {
+        // determine param value, e.g. paramId= 'toppings', param = { label: 'Toppings', type: 'checkboxes'....}
+        const param = thisProduct.data.params[paramId];
+        //console.log(paramId, param);
+
+        // LOOP for every option in this category
+        for(let optionId in param.options) {
+          // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
+          const option = param.options[optionId];
+          console.log(optionId, option);
+          // check if there is param with a name of paramId in formData and if it includes optionId
+          if(formData[paramId] && formData[paramId].includes(optionId)) {
+            // check if the option is not default -> find in data.js -> data -> params -> option (here is default option)
+            if(!option.default) {
+              // add option price to price variable
+              price += option.price;
+            }
+          } else {
+            // check if the option is default
+            if(option.default) {
+              // reduce price variable
+              price -= option.price;
+            }
+          }
+        }
+      }
+
+      // update calculated price in the HTML
+      thisProduct.priceElem.innerHTML = price;
+      //console.log('processOrder:', thisProduct);
     }
   }
 
