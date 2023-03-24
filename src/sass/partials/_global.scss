@@ -3,8 +3,8 @@
 }
 
 body {
+  background-image: url('/images/background.jpg');
   margin: 0;
-  background: lighten($color-dark, 75%);
   font-family: $font-text;
   font-size: 14px;
   line-height: 1.7;
