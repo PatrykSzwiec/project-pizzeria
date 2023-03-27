@@ -67,6 +67,7 @@
       thisProduct.initAccordion();
       thisProduct.initOrderForm();
       thisProduct.processOrder();
+      thisProduct.favouriteMark();
       //console.log('new Product:', thisProduct);
     }
     /* ADD PRODUCTS TO HTML AS DOM */
@@ -206,6 +207,34 @@
       thisProduct.priceElem.innerHTML = price;
       //console.log('processOrder:', thisProduct);
     }
+    // FUNCTION TO SORT ELEMENTS BASED ON CHECKBOX STATUS
+    favouriteMark() {
+      const allProducts = document.querySelectorAll(select.all.menuProducts);
+      const favourites = [];
+  
+      for (let product of allProducts) {
+        const favouriteCheckbox = product.querySelector(select.menuProduct.favouriteCheckbox);
+        if (favouriteCheckbox.checked) {
+          favourites.push(product);
+        }
+      }
+  
+      const nonFavourites = [];
+  
+      for (let product of allProducts) {
+        const favouriteCheckbox = product.querySelector(select.menuProduct.favouriteCheckbox);
+        if (!favouriteCheckbox.checked) {
+          nonFavourites.push(product);
+        }
+      }
+  
+      const sortedProducts = [...favourites, ...nonFavourites];
+  
+      for (let i = 0; i < sortedProducts.length; i++) {
+        const product = sortedProducts[i];
+        product.style.order = i;
+      }
+    }
 
   }
 
@@ -243,29 +272,4 @@
     new Audio(url).play();
   }
   playAudio();
-  // FUNCTION TO SORT ELEMENTS BASED ON CHECKBOX STATUS
-  function favouriteMark(event) {
-    const target = event.target.closest('.product');
-  
-    if (target) {
-      const checkbox = target.querySelector('input[type="checkbox"]');
-      checkbox.checked = !checkbox.checked;
-      
-      const productContainer = document.querySelector('#product-list');
-      const products = [...productContainer.querySelectorAll('.product')];
-  
-      // Sort products by checkbox status and then by most recent click
-      products.sort((a, b) => {
-        if (checkbox.checked) {
-          if (a === target) return -1;
-          if (b === target) return 1;
-        }
-        return b.dataset.timestamp - a.dataset.timestamp;
-      });
-  
-      // Re-insert sorted products into container
-      products.forEach(product => productContainer.appendChild(product));
-    }
-  }
-
 }
