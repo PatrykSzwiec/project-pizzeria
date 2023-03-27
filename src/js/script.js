@@ -67,7 +67,6 @@
       thisProduct.initAccordion();
       thisProduct.initOrderForm();
       thisProduct.processOrder();
-      thisProduct.favouriteMark();
       //console.log('new Product:', thisProduct);
     }
     /* ADD PRODUCTS TO HTML AS DOM */
@@ -206,20 +205,7 @@
       thisProduct.priceElem.innerHTML = price;
       //console.log('processOrder:', thisProduct);
     }
-    favouriteMark(){
-      const thisProduct = this;
-      // Create const which contain favourite checkbox id
-      const checkbox = thisProduct.favourite;
-      // Function to find if checkbox is checked or not
-      checkbox.addEventListener('change', (event) => {
-        if (event.currentTarget.checked) {
-          alert('checked');
-        } else {
-          alert('not checked');
-        }
-      });
-
-    }
+  
   }
 
   const app = {
@@ -255,6 +241,41 @@
     new Audio(url).play();
   }
   playAudio();
+  // FUNCTION TO SORT ELEMENTS BASED ON CHECKBOX STATUS
+  const favouriteMark = function () {
+    const articles = document.querySelectorAll(select.article);
+  
+    const favouriteArticles = [];
+    const otherArticles = [];
+  
+    for (let article of articles) {
+      if (article.querySelector(select.articleFavourite).checked) {
+        favouriteArticles.push(article);
+      } else {
+        otherArticles.push(article);
+      }
+    }
+  
+    favouriteArticles.sort(function (a, b) {
+      const aDate = new Date(a.querySelector(select.articleDate).innerHTML);
+      const bDate = new Date(b.querySelector(select.articleDate).innerHTML);
+      return bDate - aDate;
+    });
+  
+    otherArticles.sort(function (a, b) {
+      const aDate = new Date(a.querySelector(select.articleDate).innerHTML);
+      const bDate = new Date(b.querySelector(select.articleDate).innerHTML);
+      return bDate - aDate;
+    });
+  
+    const sortedArticles = favouriteArticles.concat(otherArticles);
+  
+    const articleList = document.querySelector(select.articleList);
+    articleList.innerHTML = '';
+  
+    for (let article of sortedArticles) {
+      articleList.appendChild(article);
+    }
+  };
 
 }
-
