@@ -1,10 +1,11 @@
 .header {
   padding: ($base-size * 5) 0;
-  background: linear-gradient(rgba(255,255,255,.6), rgba(255,255,255,.6));
+  background: linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.6));
   color: $color-dark;
+
   &__wrapper {
     position: relative;
-    background:transparent;
+    background: transparent;
   }
 
 }

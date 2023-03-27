@@ -17,6 +17,8 @@
       formInputs: 'input, select',
     },
     menuProduct: {
+      //new
+      favourite: '.product__favourite #favourite',
       clickable: '.product__header',
       form: '.product__order',
       priceElem: '.product__total-price .price',
@@ -65,6 +67,7 @@
       thisProduct.initAccordion();
       thisProduct.initOrderForm();
       thisProduct.processOrder();
+      thisProduct.favouriteMark();
       //console.log('new Product:', thisProduct);
     }
     /* ADD PRODUCTS TO HTML AS DOM */
@@ -91,6 +94,7 @@
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
       thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
+      thisProduct.favourite = thisProduct.element.querySelector(select.menuProduct.favourite);
     }
     /* ADDING ACTIVE CLASS TO CURRENT CHOOSED PRODUCT */
     initAccordion(){
@@ -202,6 +206,20 @@
       thisProduct.priceElem.innerHTML = price;
       //console.log('processOrder:', thisProduct);
     }
+    favouriteMark(){
+      const thisProduct = this;
+      // Create const which contain favourite checkbox id
+      const checkbox = thisProduct.favourite;
+      // Function to find if checkbox is checked or not
+      checkbox.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+          alert('checked');
+        } else {
+          alert('not checked');
+        }
+      });
+
+    }
   }
 
   const app = {
@@ -236,5 +254,7 @@
   function playAudio(url) {
     new Audio(url).play();
   }
+  playAudio();
+
 }
 
