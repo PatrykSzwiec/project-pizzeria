@@ -242,40 +242,32 @@
   }
   playAudio();
   // FUNCTION TO SORT ELEMENTS BASED ON CHECKBOX STATUS
-  const favouriteMark = function () {
-    const articles = document.querySelectorAll(select.article);
+  function favouriteMark(event) {
+    event.preventDefault();
+    const target = event.currentTarget;
+    const checkbox = target.querySelector('input.fav-checkbox');
+    checkbox.checked = !checkbox.checked;
   
-    const favouriteArticles = [];
-    const otherArticles = [];
-  
-    for (let article of articles) {
-      if (article.querySelector(select.articleFavourite).checked) {
-        favouriteArticles.push(article);
-      } else {
-        otherArticles.push(article);
+    const articleList = document.querySelectorAll(".product");
+    const sortedList = Array.from(articleList).sort((a, b) => {
+      const aChecked = a.querySelector('input[type="checkbox"]').checked;
+      const bChecked = b.querySelector('input[type="checkbox"]').checked;
+      if (aChecked === bChecked) {
+        const aTimestamp = parseInt(a.getAttribute("data-timestamp"));
+        const bTimestamp = parseInt(b.getAttribute("data-timestamp"));
+        return bTimestamp - aTimestamp;
       }
-    }
-  
-    favouriteArticles.sort(function (a, b) {
-      const aDate = new Date(a.querySelector(select.articleDate).innerHTML);
-      const bDate = new Date(b.querySelector(select.articleDate).innerHTML);
-      return bDate - aDate;
+      return aChecked ? -1 : 1;
     });
   
-    otherArticles.sort(function (a, b) {
-      const aDate = new Date(a.querySelector(select.articleDate).innerHTML);
-      const bDate = new Date(b.querySelector(select.articleDate).innerHTML);
-      return bDate - aDate;
-    });
+    const container = document.querySelector(".product-list");
+    container.innerHTML = "";
+    sortedList.forEach((article) => container.appendChild(article));
+  }
   
-    const sortedArticles = favouriteArticles.concat(otherArticles);
-  
-    const articleList = document.querySelector(select.articleList);
-    articleList.innerHTML = '';
-  
-    for (let article of sortedArticles) {
-      articleList.appendChild(article);
-    }
-  };
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener("click", favouriteMark);
+  });
 
 }
