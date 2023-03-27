@@ -82,6 +82,7 @@
       const menuContainer = document.querySelector(select.containerOf.menu);
       /* add element to menu */
       menuContainer.appendChild(thisProduct.element);
+
     }
     /* LIST OF REFERENCES */
     getElements(){
@@ -205,7 +206,7 @@
       thisProduct.priceElem.innerHTML = price;
       //console.log('processOrder:', thisProduct);
     }
-  
+
   }
 
   const app = {
@@ -216,6 +217,7 @@
       for(let productData in thisApp.data.products){
         new Product(productData, thisApp.data.products[productData]);
       }
+
     },
 
     initData: function(){
@@ -243,31 +245,27 @@
   playAudio();
   // FUNCTION TO SORT ELEMENTS BASED ON CHECKBOX STATUS
   function favouriteMark(event) {
-    event.preventDefault();
-    const target = event.currentTarget;
-    const checkbox = target.querySelector('input.fav-checkbox');
-    checkbox.checked = !checkbox.checked;
+    const target = event.target.closest('.product');
   
-    const articleList = document.querySelectorAll(".product");
-    const sortedList = Array.from(articleList).sort((a, b) => {
-      const aChecked = a.querySelector('input[type="checkbox"]').checked;
-      const bChecked = b.querySelector('input[type="checkbox"]').checked;
-      if (aChecked === bChecked) {
-        const aTimestamp = parseInt(a.getAttribute("data-timestamp"));
-        const bTimestamp = parseInt(b.getAttribute("data-timestamp"));
-        return bTimestamp - aTimestamp;
-      }
-      return aChecked ? -1 : 1;
-    });
+    if (target) {
+      const checkbox = target.querySelector('input[type="checkbox"]');
+      checkbox.checked = !checkbox.checked;
+      
+      const productContainer = document.querySelector('#product-list');
+      const products = [...productContainer.querySelectorAll('.product')];
   
-    const container = document.querySelector(".product-list");
-    container.innerHTML = "";
-    sortedList.forEach((article) => container.appendChild(article));
+      // Sort products by checkbox status and then by most recent click
+      products.sort((a, b) => {
+        if (checkbox.checked) {
+          if (a === target) return -1;
+          if (b === target) return 1;
+        }
+        return b.dataset.timestamp - a.dataset.timestamp;
+      });
+  
+      // Re-insert sorted products into container
+      products.forEach(product => productContainer.appendChild(product));
+    }
   }
-  
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  checkboxes.forEach((checkbox) => {
-    checkbox.addEventListener("click", favouriteMark);
-  });
 
 }
