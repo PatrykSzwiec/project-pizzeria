@@ -60,14 +60,15 @@
       const thisProduct = this;
 
       thisProduct.id = id;
+      console.log(id);
       thisProduct.data = data;
+
 
       thisProduct.renderInMenu();
       thisProduct.getElements();
       thisProduct.initAccordion();
       thisProduct.initOrderForm();
       thisProduct.processOrder();
-      thisProduct.favouriteMark();
       //console.log('new Product:', thisProduct);
     }
     /* ADD PRODUCTS TO HTML AS DOM */
@@ -207,37 +208,7 @@
       thisProduct.priceElem.innerHTML = price;
       //console.log('processOrder:', thisProduct);
     }
-    // FUNCTION TO SORT ELEMENTS BASED ON CHECKBOX STATUS
-    favouriteMark() {
-      const allProducts = document.querySelectorAll(select.all.menuProducts);
-      const favourites = [];
-  
-      for (let product of allProducts) {
-        const favouriteCheckbox = product.querySelector(select.menuProduct.favouriteCheckbox);
-        if (favouriteCheckbox.checked) {
-          favourites.push(product);
-        }
-      }
-  
-      const nonFavourites = [];
-  
-      for (let product of allProducts) {
-        const favouriteCheckbox = product.querySelector(select.menuProduct.favouriteCheckbox);
-        if (!favouriteCheckbox.checked) {
-          nonFavourites.push(product);
-        }
-      }
-  
-      const sortedProducts = [...favourites, ...nonFavourites];
-  
-      for (let i = 0; i < sortedProducts.length; i++) {
-        const product = sortedProducts[i];
-        product.style.order = i;
-      }
-    }
-
   }
-
   const app = {
     initMenu: function(){
       const thisApp = this;
@@ -268,6 +239,7 @@
   };
 
   app.init();
+
   function playAudio(url) {
     new Audio(url).play();
   }
