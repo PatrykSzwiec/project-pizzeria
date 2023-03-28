@@ -17,8 +17,6 @@
       formInputs: 'input, select',
     },
     menuProduct: {
-      //new
-      favourite: '.product__favourite #favourite',
       clickable: '.product__header',
       form: '.product__order',
       priceElem: '.product__total-price .price',
@@ -60,7 +58,7 @@
       const thisProduct = this;
 
       thisProduct.id = id;
-      console.log(id);
+      //console.log(id);
       thisProduct.data = data;
 
 
@@ -68,6 +66,7 @@
       thisProduct.getElements();
       thisProduct.initAccordion();
       thisProduct.initOrderForm();
+      thisProduct.initAmountWidget();
       thisProduct.processOrder();
       //console.log('new Product:', thisProduct);
     }
@@ -96,7 +95,7 @@
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
       thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
-      thisProduct.favourite = thisProduct.element.querySelector(select.menuProduct.favourite);
+      thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
     }
     /* ADDING ACTIVE CLASS TO CURRENT CHOOSED PRODUCT */
     initAccordion(){
@@ -147,6 +146,12 @@
         thisProduct.processOrder();
       });
       //console.log('initOrderForm:', thisProduct);
+    }
+
+    initAmountWidget(){
+      const thisProduct = this;
+
+      thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
     }
 
     processOrder(){
@@ -208,11 +213,45 @@
       thisProduct.priceElem.innerHTML = price;
       //console.log('processOrder:', thisProduct);
     }
+
   }
+
+  //
+  class AmountWidget {
+    constructor(element){
+      const thisWidget = this;
+
+      thisWidget.getElements(element);
+
+      console.log('AmountWidget: ', thisWidget);
+      console.log('constructor arguments:', element);
+    }
+
+    getElements(element){
+      const thisWidget = this;
+
+      thisWidget.element = element;
+      thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
+      thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
+      thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
+    }
+
+    setValue(value){
+      const thisWidget = this;
+
+      const newValue = parseInt(value);
+
+      /* TODO: Add validation */
+
+      thisWidget.value = newValue;
+      thisWidget.input.value = thisWidget.value;
+    }
+  }
+
   const app = {
     initMenu: function(){
       const thisApp = this;
-      console.log('thisApp.data:', thisApp.data);
+      //console.log('thisApp.data:', thisApp.data);
 
       for(let productData in thisApp.data.products){
         new Product(productData, thisApp.data.products[productData]);
@@ -228,11 +267,11 @@
 
     init: function(){
       const thisApp = this;
-      console.log('*** App starting ***');
-      console.log('thisApp:', thisApp);
-      console.log('classNames:', classNames);
-      console.log('settings:', settings);
-      console.log('templates:', templates);
+      //console.log('*** App starting ***');
+      //console.log('thisApp:', thisApp);
+      //console.log('classNames:', classNames);
+      //console.log('settings:', settings);
+      //console.log('templates:', templates);
       thisApp.initData();
       thisApp.initMenu();
     },
@@ -240,6 +279,7 @@
 
   app.init();
 
+  // Function to play "Mamma Mia by Super Mario" by clicking at pizzeria title
   function playAudio(url) {
     new Audio(url).play();
   }

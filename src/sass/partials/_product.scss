@@ -15,13 +15,13 @@
     font-family: $font-header;
     font-size: 22px;
     cursor: pointer;
-    width:90%;
+    width: 90%;
   }
-/* New */
+  /* New */
   .product__favourite {
-    display:flex;
+    display: flex;
     width: 10%;
-    float:left;
+    float: left;
     flex-direction: row;
 
     .add-fav {
@@ -45,6 +45,7 @@
         position: relative;
         transition: all .5s ease-in-out;
       }
+
       .fa-circle-plus {
         font-size: 10px;
         color: #333;
@@ -59,19 +60,22 @@
         text-align: center;
         transition: all 1s ease-in-out;
       }
+
       input[type="checkbox"] {
         position: absolute;
         opacity: 0;
+
         &:checked + .fa-star {
           color: orange;
+
           .fa-circle-plus {
-            display:none;
+            display: none;
           }
         }
       }
     }
   }
-/* END OF NEW */
+  /* END OF NEW */
 
   &__name {
     position: relative;
