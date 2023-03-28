@@ -244,4 +244,43 @@
     new Audio(url).play();
   }
   playAudio();
+  // Function to sort products by recent clicked to favourite
+  function sortProductList() {
+    // Create const which contain <div class='product-list'>
+    const productList = document.querySelector('.product-list');
+    // Make array from all articles
+    const articles = Array.from(productList.querySelectorAll('article'));
+  
+    // Sort articles by checkbox checked state and click timestamp
+    articles.sort((a, b) => {
+      const checkboxA = a.querySelector('.favourite-checkbox');
+      const checkboxB = b.querySelector('.favourite-checkbox');
+      const checkedA = checkboxA ? checkboxA.checked : false;
+      const checkedB = checkboxB ? checkboxB.checked : false;
+      const timestampA = parseInt(a.dataset.lastClicked) || 0;
+      const timestampB = parseInt(b.dataset.lastClicked) || 0;
+  
+      if (checkedA === checkedB) {
+        return timestampB - timestampA; // Sort by most recent click
+      } else if (checkedA) {
+        return -1; // Checkbox A checked, move it up
+      } else {
+        return 1; // Checkbox B checked, move it up
+      }
+    });
+  
+    // Reinsert sorted articles into product list
+    articles.forEach((article) => {
+      productList.appendChild(article);
+    });
+  }
+  // Reinserting article based on timestamp
+  const checkboxes = document.querySelectorAll('.favourite-checkbox');
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener('click', (event) => {
+      const article = event.target.closest('article');
+      article.dataset.lastClicked = Date.now(); // Store current timestamp
+      sortProductList(); // Update sorting
+    });
+  });
 }
