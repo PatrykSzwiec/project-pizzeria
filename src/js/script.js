@@ -6,7 +6,7 @@
   const select = {
     templateOf: {
       menuProduct: '#template-menu-product',
-      cartProduct: '#template-cart-product', // CODE ADDED
+      cartProduct: '#template-cart-product',
     },
     containerOf: {
       menu: '#product-list',
@@ -27,12 +27,12 @@
     },
     widgets: {
       amount: {
-        input: 'input.amount', // CODE CHANGED
+        input: 'input.amount',
         linkDecrease: 'a[href="#less"]',
         linkIncrease: 'a[href="#more"]',
       },
     },
-    // CODE ADDED START
+
     cart: {
       productList: '.cart__order-summary',
       toggleTrigger: '.cart__summary',
@@ -40,6 +40,7 @@
       totalPrice: '.cart__total-price strong, .cart__order-total .cart__order-price-sum strong',
       subtotalPrice: '.cart__order-subtotal .cart__order-price-sum strong',
       deliveryFee: '.cart__order-delivery .cart__order-price-sum strong',
+      discount:'.cart__order-discount .cart__order-price-sum strong',
       form: '.cart__order',
       formSubmit: '.cart__order [type="submit"]',
       phone: '[name="phone"]',
@@ -51,7 +52,7 @@
       edit: '[href="#edit"]',
       remove: '[href="#remove"]',
     },
-    // CODE ADDED END
+    
   };
 
   const classNames = {
@@ -62,7 +63,7 @@
     cart: {
       wrapperActive: 'active',
     },
-    // CODE ADDED END
+    
   };
 
   const settings = {
@@ -74,6 +75,11 @@
 
     cart: {
       defaultDeliveryFee: 20,
+    },
+
+    discountValue: {
+      min: -15,
+      code: 'fooBar',
     },
 
     db: {
@@ -95,7 +101,7 @@
     /* TAKE DATA FROM DATA.JS */
     constructor(id, data){
       const thisProduct = this;
-
+      
       thisProduct.id = id;
       //console.log(id);
       thisProduct.data = data;
@@ -128,13 +134,15 @@
     getElements(){
       const thisProduct = this;
 
-      thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
-      thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);
-      thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
-      thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
-      thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
-      thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
-      thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
+      thisProduct.dom = {};
+
+      thisProduct.dom.accordionTrigger = thisProduct.dom.element.querySelector(select.menuProduct.clickable);
+      thisProduct.dom.form = thisProduct.dom.element.querySelector(select.menuProduct.form);
+      thisProduct.dom.formInputs = thisProduct.dom.form.querySelectorAll(select.all.formInputs);
+      thisProduct.dom.cartButton = thisProduct.dom.element.querySelector(select.menuProduct.cartButton);
+      thisProduct.dom.priceElem = thisProduct.dom.element.querySelector(select.menuProduct.priceElem);
+      thisProduct.dom.imageWrapper = thisProduct.dom.element.querySelector(select.menuProduct.imageWrapper);
+      thisProduct.dom.amountWidgetElem = thisProduct.dom.element.querySelector(select.menuProduct.amountWidget);
     }
     /* ADDING ACTIVE CLASS TO CURRENT CHOOSED PRODUCT */
     initAccordion(){
@@ -162,25 +170,25 @@
 
         /* toogle active class on thisProduct.element */
 
-        thisProduct.element.classList.toggle(classNames.menuProduct.wrapperActive);
+        thisProduct.dom.element.classList.toggle(classNames.menuProduct.wrapperActive);
       });
     }
 
     initOrderForm(){
       const thisProduct = this;
 
-      thisProduct.form.addEventListener('submit', function(event){
+      thisProduct.dom.form.addEventListener('submit', function(event){
         event.preventDefault();
         thisProduct.processOrder();
       });
 
-      for(let input of thisProduct.formInputs){
+      for(let input of thisProduct.dom.formInputs){
         input.addEventListener('change', function(){
           thisProduct.processOrder();
         });
       }
 
-      thisProduct.cartButton.addEventListener('click', function(event){
+      thisProduct.dom.cartButton.addEventListener('click', function(event){
         event.preventDefault();
         thisProduct.addToCart();
         thisProduct.processOrder();
@@ -229,7 +237,7 @@
             }
           }
           // create a const to find image which answers a specific couple category-option
-          const optionImage = thisProduct.imageWrapper.querySelector('.' + paramId + '-' + optionId);
+          const optionImage = thisProduct.dom.imageWrapper.querySelector('.' + paramId + '-' + optionId);
           // console.log('Image:', optionImage);
           if(optionImage){
             if(optionSelected) {
@@ -243,13 +251,15 @@
         }
 
       }
-      thisProduct.priceSingle = price;
+      thisProduct.dom.priceSingle = price;
       /* multiply price by amount */
-      price *= thisProduct.amountWidget.value;
+      price *= thisProduct.dom.amountWidget.value;
       // update calculated price in the HTML
       //console.log(price);
-      thisProduct.priceElem.innerHTML = price;
+      thisProduct.dom.priceElem.innerHTML = price;
       //console.log('processOrder:', thisProduct);
+
+      //
     }
 
     initAmountWidget(){
@@ -409,6 +419,7 @@
       thisCart.dom.subtotalPrice = thisCart.dom.wrapper.querySelector(select.cart.subtotalPrice);
       thisCart.dom.totalPrice = thisCart.dom.wrapper.querySelectorAll(select.cart.totalPrice);
       thisCart.dom.totalNumber = thisCart.dom.wrapper.querySelector(select.cart.totalNumber);
+      thisCart.dom.discount = thisCart.dom.wrapper.querySelector(select.cart.discount);
       thisCart.dom.form = thisCart.dom.wrapper.querySelector(select.cart.form);
       thisCart.dom.address = thisCart.dom.wrapper.querySelector(select.cart.address);
       thisCart.dom.phone = thisCart.dom.wrapper.querySelector(select.cart.phone);
@@ -448,6 +459,7 @@
         subtotalPrice: thisCart.dom.subtotalPrice,
         totalNumber: thisCart.dom.totalNumber,
         deliveryFee: thisCart.dom.deliveryFee,
+        discount: thisCart.dom.discount,
         products: []
       };
 
@@ -493,12 +505,13 @@
       const thisCart = this;
 
       const deliveryFee = settings.cart.defaultDeliveryFee;
+      const discount = settings.discountValue.min; //NEW
       //console.log(deliveryFee);
 
       thisCart.totalNumber = 0;
       thisCart.subtotalPrice = 0;
       thisCart.totalPrice = 0;
-
+      console.log(discount);
       // LOOP to update totalNumber and subtotalPrice
       for(let product of thisCart.products){
         thisCart.totalNumber += product.amount;
@@ -506,16 +519,22 @@
       }
       /* If cart is empty set deliveryFee value to 0 */
       if(thisCart.subtotalPrice != 0){
-        thisCart.totalPrice = thisCart.subtotalPrice + deliveryFee;
+        thisCart.totalPrice = thisCart.subtotalPrice + deliveryFee;// + discount;
       } else{
         thisCart.totalPrice = 0;
         thisCart.dom.deliveryFee.innerHTML = 0;
       }
 
+      const inputDiscountCode = document.querySelector('input .cart_discount');
+      
+      if (inputDiscountCode === settings.discountValue.code) {
+        thisCart.totalPrice += settings.discountValue.min;
+      }
+      
       thisCart.dom.totalNumber.innerHTML = thisCart.totalNumber;
       thisCart.dom.subtotalPrice.innerHTML = thisCart.subtotalPrice;
       thisCart.dom.deliveryFee.innerHTML = deliveryFee;
-
+      thisCart.dom.discount.innerHTML = discount; //NEW
       /* Accessing innerHTML to each element at Cart */
       for (let item of thisCart.dom.totalPrice){
         item.innerHTML = thisCart.totalPrice;
@@ -623,6 +642,7 @@
       });
     }
   }
+
   const app = {
     initMenu: function(){
       const thisApp = this;
@@ -632,6 +652,48 @@
         new Product(thisApp.data.products[productData].id, thisApp.data.products[productData]);
       }
 
+      // Function to sort products by recent clicked to favourite
+      function sortProductList() {
+        // Create const which contain <div class='product-list'>
+        const productList = document.querySelector('.product-list');
+        // Make array from all articles
+        const articles = Array.from(productList.querySelectorAll('article'));
+
+        // Sort articles by checkbox checked state and click timestamp
+        articles.sort((a, b) => {
+          const checkboxA = a.querySelector('.favourite-checkbox');
+          const checkboxB = b.querySelector('.favourite-checkbox');
+          const checkedA = checkboxA ? checkboxA.checked : false;
+          const checkedB = checkboxB ? checkboxB.checked : false;
+          const timestampA = parseInt(a.dataset.lastClicked) || 0;
+          const timestampB = parseInt(b.dataset.lastClicked) || 0;
+
+          if (checkedA === checkedB) {
+            return timestampB - timestampA; // Sort by most recent click
+          } else if (checkedA) {
+            return -1; // Checkbox A checked, move it up
+          } else {
+            return 1; // Checkbox B checked, move it up
+          }
+        });
+
+        console.log('articles',articles, productList);
+
+        // Reinsert sorted articles into product list
+        articles.forEach((article) => {
+          productList.appendChild(article);
+        });
+      }
+      // Reinserting article based on timestamp
+      const checkboxes = document.querySelectorAll('.favourite-checkbox');
+      console.log(checkboxes);
+      checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener('click', (event) => {
+          const article = event.target.closest('article');
+          article.dataset.lastClicked = Date.now(); // Store current timestamp
+          sortProductList(); // Update sorting
+        });
+      });
     },
 
     initData: function(){
@@ -675,44 +737,32 @@
   };
 
   app.init();
-
-  // Function to sort products by recent clicked to favourite
-  function sortProductList() {
-    // Create const which contain <div class='product-list'>
-    const productList = document.querySelector('.product-list');
-    // Make array from all articles
-    const articles = Array.from(productList.querySelectorAll('article'));
-  
-    // Sort articles by checkbox checked state and click timestamp
-    articles.sort((a, b) => {
-      const checkboxA = a.querySelector('.favourite-checkbox');
-      const checkboxB = b.querySelector('.favourite-checkbox');
-      const checkedA = checkboxA ? checkboxA.checked : false;
-      const checkedB = checkboxB ? checkboxB.checked : false;
-      const timestampA = parseInt(a.dataset.lastClicked) || 0;
-      const timestampB = parseInt(b.dataset.lastClicked) || 0;
-  
-      if (checkedA === checkedB) {
-        return timestampB - timestampA; // Sort by most recent click
-      } else if (checkedA) {
-        return -1; // Checkbox A checked, move it up
-      } else {
-        return 1; // Checkbox B checked, move it up
-      }
-    });
-  
-    // Reinsert sorted articles into product list
-    articles.forEach((article) => {
-      productList.appendChild(article);
-    });
-  }
-  // Reinserting article based on timestamp
-  const checkboxes = document.querySelectorAll('.favourite-checkbox');
-  checkboxes.forEach((checkbox) => {
-    checkbox.addEventListener('click', (event) => {
-      const article = event.target.closest('article');
-      article.dataset.lastClicked = Date.now(); // Store current timestamp
-      sortProductList(); // Update sorting
-    });
-  });
 }
+
+/*
+const discounts = {
+  'foo': {
+    value: 15,
+    count: 1,
+    minValue: 20,
+  },
+  'bar': {
+    value: 15,
+    minValue: 20,
+  },
+  fooBar: {
+    value: 15,
+    count: 3,
+  }
+};
+
+if (discounts.foo in 'count') {
+  if (discounts.foo.count <= 0.) {
+    throw new Error('Invalid'); //kod został użyty 
+  }
+}
+
+order.placeOrder();
+
+discounts.foo.count--;
+*/
