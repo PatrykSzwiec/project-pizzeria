@@ -92,11 +92,11 @@
 
   const templates = {
     menuProduct: Handlebars.compile(document.querySelector(select.templateOf.menuProduct).innerHTML),
-    // CODE ADDED START
-    cartProduct: Handlebars.compile(document.querySelector(select.templateOf.cartProduct).innerHTML),
-    // CODE ADDED END
-  };
 
+    cartProduct: Handlebars.compile(document.querySelector(select.templateOf.cartProduct).innerHTML),
+
+  };
+  /* Creating Products */
   class Product{
     /* TAKE DATA FROM DATA.JS */
     constructor(id, data){
@@ -117,14 +117,17 @@
     renderInMenu(){
       const thisProduct = this;
 
-      /* generate HTML based on template */
+      // Generate HTML based on template
       const generatedHTML = templates.menuProduct(thisProduct.data);
       //console.log(generatedHTML);
-      /* create element using utils.createELementFromHTML */
+
+      // Create element using utils.createELementFromHTML
       thisProduct.element = utils.createDOMFromHTML(generatedHTML);
-      /* find menu container */
+
+      // Find menu container
       const menuContainer = document.querySelector(select.containerOf.menu);
-      /* add element to menu */
+
+      // Add element to menu
       menuContainer.appendChild(thisProduct.element);
 
     }
@@ -144,32 +147,32 @@
     initAccordion(){
       const thisProduct = this;
 
-      /* find the clickable trigger (the element that should react to clicking) */
+      // find the clickable trigger (the element that should react to clicking)
 
       //const clickableTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
 
-      /* START: add event listener to clickable trigger on event click */
-      //clickableTrigger.addEventListener('click', function(event){   - first version if we using clickableTrigger variable
+      // START: add event listener to clickable trigger on event click
+      // clickableTrigger.addEventListener('click', function(event){   - first version if we using clickableTrigger variable
       thisProduct.accordionTrigger.addEventListener('click', function(event){
-        /* prevent default action for event */
+        // prevent default action for event
         event.preventDefault();
 
-        /* find active product (product that has active class) */
+        // find active product (product that has active class)
 
         const activeProduct = document.querySelector(select.all.menuProductsActive);
 
-        /* if there is active product and it's not thisProduct.element remove class active from it */
+        // if there is active product and it's not thisProduct.element remove class active from it
 
         if(activeProduct && activeProduct != thisProduct.element){
           activeProduct.classList.remove(classNames.menuProduct.wrapperActive);
         }
 
-        /* toogle active class on thisProduct.element */
+        // toogle active class on thisProduct.element
 
         thisProduct.element.classList.toggle(classNames.menuProduct.wrapperActive);
       });
     }
-
+    /* SETTING UP EVENT LISTENERS FOR VARIOUS ELEMENTS */
     initOrderForm(){
       const thisProduct = this;
 
@@ -248,16 +251,15 @@
 
       }
       thisProduct.priceSingle = price;
-      /* multiply price by amount */
+      // multiply price by amount
       price *= thisProduct.amountWidget.value;
       // update calculated price in the HTML
       //console.log(price);
       thisProduct.priceElem.innerHTML = price;
       //console.log('processOrder:', thisProduct);
 
-      //
     }
-
+    /* COUNTING HOW MANY PRODUCTS ARE IN CART */
     initAmountWidget(){
       const thisProduct = this;
 
@@ -267,13 +269,13 @@
         thisProduct.processOrder();
       });
     }
-
+    /* ADDING PRODUCT TO CART */
     addToCart(){
       const thisProduct = this;
 
       app.cart.add(thisProduct.prepareCartProduct());
     }
-
+    /* PREPARE PRODUCTS DATA FOR ADDING TO CART */
     prepareCartProduct(){
       const thisProduct = this;
 
@@ -287,7 +289,7 @@
       };
       return productSummary;
     }
-
+    /* PREPARE ALL PARAMS OF PRODUCT TO INSERT IT INTO prepareCartProduct */
     prepareCartProductParams(){
       const thisProduct = this;
 
@@ -322,7 +324,7 @@
       return params;
     }
   }
-
+  /* Widget of amount at product selection */
   class AmountWidget {
     constructor(element){
       const thisWidget = this;
@@ -346,12 +348,13 @@
     announce(){
       const thisWidget = this;
 
+      // Creating new customEvent
       const event = new CustomEvent('updated', {
         bubbles: true
       });
       thisWidget.element.dispatchEvent(event);
     }
-
+    /* SETTING VALUE OF AMOUNT AND VALIDATION IF ITS NOT A INT */
     setValue(value){
       const thisWidget = this;
 
@@ -367,6 +370,7 @@
       //console.log(thisWidget.value);
     }
 
+    /* CHANGING AMOUNT BASED ON  + or - widget at selecting product */
     initActions(){
       const thisWidget = this;
 
@@ -374,6 +378,7 @@
         thisWidget.setValue(thisWidget.input.value);
       });
 
+      // Listener that change amount on click minus
       thisWidget.linkDecrease.addEventListener('click', function(event){
         /* prevent default action for event */
         event.preventDefault();
@@ -382,6 +387,7 @@
 
       });
 
+      // Listener that change amount on click plus
       thisWidget.linkIncrease.addEventListener('click', function(event){
         /* prevent default action for event */
         event.preventDefault();
@@ -391,7 +397,7 @@
       });
     }
   }
-
+  /* Creating the whole Cart */
   class Cart {
     constructor(element){
       const thisCart = this;
@@ -402,7 +408,7 @@
       thisCart.initActions();
       //console.log('new Cart', thisCart);
     }
-
+    /* GETTING ALL THE DOM ELEMENTS TO EASLIER ACCESS TO OTHER METHODS */
     getElements(element){
       const thisCart = this;
 
@@ -420,12 +426,12 @@
       thisCart.dom.address = thisCart.dom.wrapper.querySelector(select.cart.address);
       thisCart.dom.phone = thisCart.dom.wrapper.querySelector(select.cart.phone);
     }
-
+    /* EVENT LISTENERS FOR TOOGLE/REMOVE/AUTOUPDATE AND SUBMIT FUNCTION ALSO CART CLEAR */
     initActions(){
       const thisCart = this;
       // Event listener on click element thisCart.dom.toogleTrigger
       thisCart.dom.toggleTrigger.addEventListener('click', function(){
-        /* toogle active wrapper */
+        // toogle active wrapper //
         thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
       });
 
@@ -443,12 +449,13 @@
         thisCart.clearCart();
       });
     }
-
+    /* SENDING ORDER BY POST TO app.json order{} WITHH DATA AT payload VARIABLE */
     sendOrder(){
       const thisCart = this;
-
+      // Connecting to app.json orders {} object
       const url = settings.db.url + '/' + settings.db.orders;
 
+      // Creating const which sets parameteters which will be send as order
       const payload = {
         address: thisCart.dom.address,
         phone: thisCart.dom.phone,
@@ -481,25 +488,25 @@
         });
 
     }
-
+    /* ADDING PRODUCT TO CART */
     add(menuProduct){
       const thisCart = this;
 
-      /* generate HTML based on template */
+      // generate HTML based on template
       const generatedHTML = templates.cartProduct(menuProduct);
       //console.log(generatedHTML);
 
-      /* create DOM using utils.createElementFromHTML */
+      // create DOM using utils.createElementFromHTML
       const generatedDOM = utils.createDOMFromHTML(generatedHTML);
 
-      /* add DOM to product list at Cart */
+      // add DOM to product list at Cart
       thisCart.dom.productList.appendChild(generatedDOM);
       thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
       thisCart.update();
       //console.log('thisCart.products', thisCart.products);
       // console.log('adding product',menuProduct);
     }
-
+    /* UPDATE CART ON EVERY CHANGE INSIDE */
     update(){
       const thisCart = this;
 
@@ -516,56 +523,53 @@
         thisCart.totalNumber += product.amount;
         thisCart.subtotalPrice += product.price;
       }
-      /* TODO !!!!  Discounts */
-      const inputDiscountCode = document.querySelector('input .cart_discount');
 
-      if (inputDiscountCode === settings.discountValue.code) {
-        thisCart.totalPrice += settings.discountValue.min;
-      }
-
-      /* Check if the totalNumber of products in Cart is 0 then deliveryFee is 0 and discount is 0 */
+      thisCart.dom.subtotalPrice.innerHTML = thisCart.subtotalPrice;
+      thisCart.dom.totalNumber.innerHTML = thisCart.totalNumber;
+      // Check if the totalNumber of products in Cart is 0 then deliveryFee is 0 and discount is 0
       if (thisCart.totalNumber > 0) {
         thisCart.dom.deliveryFee.innerHTML = deliveryFee;
         thisCart.dom.discount.innerHTML = discount;
-        thisCart.totalPrice = thisCart.subtotalPrice + deliveryFee; //TO DO discount 
+        thisCart.totalPrice = thisCart.subtotalPrice + deliveryFee; //TO DO discount
       } else {
         thisCart.dom.deliveryFee.innerHTML = 0; // reset delivery price to 0
         thisCart.dom.discount.innerHTML = 0; // reset discount to 0
       }
 
-      thisCart.dom.totalNumber.innerHTML = thisCart.totalNumber;
-      thisCart.dom.subtotalPrice.innerHTML = thisCart.subtotalPrice;
-
-      /* Accessing innerHTML of totalPrice  to each element at Cart */
+      // Accessing innerHTML of totalPrice  to each element at Cart
       for (let item of thisCart.dom.totalPrice){
         item.innerHTML = thisCart.totalPrice;
       }
 
     }
-
+    /* REMOVING SINGLE PRODUCT  DOM FROM CART */
     remove(cartProduct){
       const thisCart = this;
-      /* Finding HTML element that represent product and remove it from the DOM*/
+      // Finding HTML element that represent product and remove it from the DOM
       cartProduct.dom.wrapper.remove();
-      /* Find the index of cartProduct object in 'products' array of the 'thisCart' */
+
+      // Find the index of cartProduct object in 'products' array of the 'thisCart'
       const productIndex = thisCart.products.indexOf(cartProduct);
-      /* Removing object from 'products' using splice() method */
+
+      // Removing object from 'products' using splice() method
       thisCart.products.splice(productIndex);
-      /* Calling update methor to update cart after removing product */
+
+      // Calling update methor to update cart after removing product
       thisCart.update();
     }
-
+    /* CLEARING CART AFTER SUBMIT ORDER */
     clearCart(){
       const thisCart = this;
       const cartProducts = [...thisCart.products];
 
-      /* Removing all Products from Cart */
+      // Removing all Products from Cart
       for (let cartProduct of cartProducts) {
         thisCart.remove(cartProduct);
       }
 
-      /* Remove data at inputs after order */
+      // Remove data at inputs after order
       thisCart.dom.form.reset();
+
       thisCart.update();
     }
   }
@@ -586,7 +590,7 @@
       thisCartProduct.initActions();
       //console.log(thisCartProduct);
     }
-
+    /* GETTING ALL THE DOM ELEMENTS TO EASLIER ACCESS TO OTHER METHODS */
     getElements(element){
       const thisCartProduct = this;
 
@@ -599,7 +603,7 @@
 
       //console.log('thisCartProduct', thisCartProduct);
     }
-
+    /* GETTING ALL NECESSARY DATA FROM PRODUCT TO DISPLAY */
     getData(){
       const thisCartProduct = this;
 
@@ -630,7 +634,7 @@
         thisCartProduct.dom.price.innerHTML = thisCartProduct.price;
       });
     }
-
+    /* REMOVING SINGLE PRODUCT FROM CART */
     remove(){
       const thisCartProduct = this;
 
@@ -643,7 +647,7 @@
 
       thisCartProduct.dom.wrapper.dispatchEvent(event);
     }
-
+    /* INIT ACTIONS ON ICON CLICK EDIT/DELETE */
     initActions(){
       const thisCartProduct = this;
 
@@ -667,7 +671,7 @@
         new Product(thisApp.data.products[productData].id, thisApp.data.products[productData]);
       }
 
-      // Function to sort products by recent clicked to favourite
+      /* FUNCTION TO SORT PRODUCTS BY FAVOURITE RECENT CLICKED */
       function sortProductList() {
         // Create const which contain <div class='product-list'>
         const productList = document.querySelector('.product-list');
