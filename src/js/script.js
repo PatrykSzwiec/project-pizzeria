@@ -440,6 +440,7 @@
       thisCart.dom.form.addEventListener('submit', function(event){
         event.preventDefault();
         thisCart.sendOrder();
+        thisCart.clearCart();
       });
     }
 
@@ -476,7 +477,9 @@
           return response.json();
         }).then(function(parsedResponse){
           console.log('parsedResponse', parsedResponse);
+          thisCart.clearCart();
         });
+
     }
 
     add(menuProduct){
@@ -507,31 +510,33 @@
       thisCart.totalNumber = 0;
       thisCart.subtotalPrice = 0;
       thisCart.totalPrice = 0;
-      console.log(discount);
+
       // LOOP to update totalNumber and subtotalPrice
       for(let product of thisCart.products){
         thisCart.totalNumber += product.amount;
         thisCart.subtotalPrice += product.price;
       }
-      /* If cart is empty set deliveryFee value to 0 */
-      if(thisCart.subtotalPrice != 0){
-        thisCart.totalPrice = thisCart.subtotalPrice + deliveryFee;// + discount;
-      } else{
-        thisCart.totalPrice = 0;
-        thisCart.dom.deliveryFee.innerHTML = 0;
-      }
-
+      /* TODO !!!!  Discounts */
       const inputDiscountCode = document.querySelector('input .cart_discount');
-      
+
       if (inputDiscountCode === settings.discountValue.code) {
         thisCart.totalPrice += settings.discountValue.min;
       }
-      
+
+      /* Check if the totalNumber of products in Cart is 0 then deliveryFee is 0 and discount is 0 */
+      if (thisCart.totalNumber > 0) {
+        thisCart.dom.deliveryFee.innerHTML = deliveryFee;
+        thisCart.dom.discount.innerHTML = discount;
+        thisCart.totalPrice = thisCart.subtotalPrice + deliveryFee; //TO DO discount 
+      } else {
+        thisCart.dom.deliveryFee.innerHTML = 0; // reset delivery price to 0
+        thisCart.dom.discount.innerHTML = 0; // reset discount to 0
+      }
+
       thisCart.dom.totalNumber.innerHTML = thisCart.totalNumber;
       thisCart.dom.subtotalPrice.innerHTML = thisCart.subtotalPrice;
-      thisCart.dom.deliveryFee.innerHTML = deliveryFee;
-      thisCart.dom.discount.innerHTML = discount; //NEW
-      /* Accessing innerHTML to each element at Cart */
+
+      /* Accessing innerHTML of totalPrice  to each element at Cart */
       for (let item of thisCart.dom.totalPrice){
         item.innerHTML = thisCart.totalPrice;
       }
@@ -547,6 +552,20 @@
       /* Removing object from 'products' using splice() method */
       thisCart.products.splice(productIndex);
       /* Calling update methor to update cart after removing product */
+      thisCart.update();
+    }
+
+    clearCart(){
+      const thisCart = this;
+      const cartProducts = [...thisCart.products];
+
+      /* Removing all Products from Cart */
+      for (let cartProduct of cartProducts) {
+        thisCart.remove(cartProduct);
+      }
+
+      /* Remove data at inputs after order */
+      thisCart.dom.form.reset();
       thisCart.update();
     }
   }
