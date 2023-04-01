@@ -262,7 +262,6 @@
     /* COUNTING HOW MANY PRODUCTS ARE IN CART */
     initAmountWidget(){
       const thisProduct = this;
-
       thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
 
       thisProduct.amountWidgetElem.addEventListener('updated', function(){
@@ -343,6 +342,7 @@
       thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
       thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
       thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
+      //console.log(thisWidget.input.value);
     }
 
     announce(){
@@ -367,7 +367,6 @@
 
       thisWidget.input.value = thisWidget.value;
       thisWidget.announce();
-      //console.log(thisWidget.value);
     }
 
     /* CHANGING AMOUNT BASED ON  + or - widget at selecting product */
@@ -376,6 +375,7 @@
 
       thisWidget.input.addEventListener('change', function(){
         thisWidget.setValue(thisWidget.input.value);
+        console.log(thisWidget.input.value);
       });
 
       // Listener that change amount on click minus
@@ -622,12 +622,13 @@
     initAmountWidget(){
       const thisCartProduct = this;
 
-      thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidget);
-      //console.log(thisCartProduct.amountWidget);
+      //thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidget);
+      console.log(thisCartProduct.amount);
 
       thisCartProduct.dom.amountWidget.addEventListener('updated', function(){
         // Take amount value from AmountWidget object
         thisCartProduct.amount = thisCartProduct.amountWidget.value;
+        console.log(thisCartProduct.amount.value);
         // Calculate amount * price Single
         thisCartProduct.price = thisCartProduct.amount * thisCartProduct.priceSingle;
         // Update the price at HTML
@@ -662,7 +663,7 @@
     }
   }
 
-  const app = {
+  const app = { 
     initMenu: function(){
       const thisApp = this;
       //console.log('thisApp.data:', thisApp.data);
@@ -705,7 +706,7 @@
       }
       // Reinserting article based on timestamp
       const checkboxes = document.querySelectorAll('.favourite-checkbox');
-      console.log(checkboxes);
+      //console.log(checkboxes);
       checkboxes.forEach((checkbox) => {
         checkbox.addEventListener('click', (event) => {
           const article = event.target.closest('article');
@@ -726,14 +727,14 @@
         })
 
         .then(function(parsedResponse){
-          console.log('parsedResponse', parsedResponse);
+          //console.log('parsedResponse', parsedResponse);
 
           /*save parsedResponse as thisApp.data.products */
           thisApp.data.products = parsedResponse;
           /* execute initMenu method */
           thisApp.initMenu();
         });
-      console.log('thisApp.data', JSON.stringify(thisApp.data));
+      //console.log('thisApp.data', JSON.stringify(thisApp.data));
     },
 
     initCart: function(){
