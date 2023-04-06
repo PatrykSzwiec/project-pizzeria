@@ -2,6 +2,15 @@ import {settings, select} from './settings.js';
 import Product from './components/Product.js';
 import Cart from './components/Cart.js';
 const app = {
+  initPages: function(){
+    const thisApp = this;
+
+    // Find container with their all child elements
+    thisApp.pages = document.querySelector(select.containerOf.pages).children;
+
+    thisApp.activatePage();
+  },
+
   initMenu: function(){
     const thisApp = this;
     //console.log('thisApp.data:', thisApp.data);
