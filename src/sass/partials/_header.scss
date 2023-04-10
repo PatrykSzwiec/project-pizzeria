@@ -40,7 +40,7 @@
   position: absolute;
   @include flex(row, flex-start, flex-start);
   bottom: -60px;
-  // bottom: ($base-size * -8);
+  //bottom: ($base-size * -8);
 
   a {
     @extend .h2;
