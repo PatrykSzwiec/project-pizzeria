@@ -5,7 +5,7 @@ class AmountWidget {
     const thisWidget = this;
 
     thisWidget.getElements(element);
-    thisWidget.setValue(settings.amountWidget.defaultMin);
+    thisWidget.setValue(thisWidget.input.value || settings.amountWidget.defaultValue);
     thisWidget.initActions();
     //console.log('AmountWidget: ', thisWidget);
     //console.log('constructor arguments:', element);
@@ -27,18 +27,26 @@ class AmountWidget {
     const newValue = parseInt(value);
 
     /* TODO: Add validation */
-    if (
-      thisWidget.value !== newValue &&
-      !isNaN(newValue) &&
-      newValue >= settings.amountWidget.defaultMin &&
-      newValue <= settings.amountWidget.defaultMax
-    ) {
-      thisWidget.value = newValue;
+    if(thisWidget.value !== newValue && !isNaN(newValue)) {
+      if(newValue >= settings.amountWidget.defaultMin) {
+        if(newValue <= settings.amountWidget.defaultMax){
+          thisWidget.value = newValue;
+          //console.log(thisWidget.value);
+          thisWidget.announce();
+        }
+      }
     }
-
-    thisWidget.announce();
-
     thisWidget.input.value = thisWidget.value;
+  }
+
+  announce() {
+    const thisWidget = this;
+
+    // Creating new customEvent
+    const event = new CustomEvent('updated', {
+      bubbles: true,
+    });
+    thisWidget.element.dispatchEvent(event);
   }
 
   /* CHANGING AMOUNT BASED ON  + or - widget at selecting product */
@@ -65,16 +73,6 @@ class AmountWidget {
 
       thisWidget.setValue(thisWidget.value + 1);
     });
-  }
-
-  announce() {
-    const thisWidget = this;
-
-    // Creating new customEvent
-    const event = new CustomEvent('updated', {
-      bubbles: true,
-    });
-    thisWidget.element.dispatchEvent(event);
   }
 }
 
