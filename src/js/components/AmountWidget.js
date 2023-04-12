@@ -37,15 +37,7 @@ class AmountWidget extends BaseWidget{
     thisWidget.dom.input.value = thisWidget.value;
   }
 
-  announce() {
-    const thisWidget = this;
-
-    // Creating new customEvent
-    const event = new CustomEvent('updated', {
-      bubbles: true,
-    });
-    thisWidget.dom.wrapper.dispatchEvent(event);
-  }
+ 
 
   /* CHANGING AMOUNT BASED ON  + or - widget at selecting product */
   initActions() {
