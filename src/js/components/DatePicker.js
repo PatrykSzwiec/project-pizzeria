@@ -1,4 +1,4 @@
-import BaseWidget from '../components/BaseWidget.js';
+import BaseWidget from './BaseWidget.js';
 import utils from '../utils.js';
 import {select, settings} from '../settings.js';
 
@@ -25,7 +25,7 @@ class DatePicker extends BaseWidget{
       },
       disable: [
         function(date) {
-          return (date.getDay() === 1);
+          return (date.getDay() === 1); // by "1" means monday
         }
       ],
       onChange: function(selectedDates, dateStr) {
