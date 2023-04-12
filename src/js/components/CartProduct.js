@@ -7,7 +7,7 @@ class CartProduct {
     thisCartProduct.id = menuProduct.id;
     thisCartProduct.name = menuProduct.name;
     thisCartProduct.amount = menuProduct.amount;
-    console.log(thisCartProduct.amount);
+    //console.log(thisCartProduct.amount);
     thisCartProduct.priceSingle = menuProduct.priceSingle;
     thisCartProduct.price = menuProduct.price;
     thisCartProduct.params = menuProduct.params;

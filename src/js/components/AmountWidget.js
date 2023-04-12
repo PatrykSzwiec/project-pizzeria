@@ -1,42 +1,40 @@
 import {settings, select} from '../settings.js';
+import BaseWidget from './BaseWidget.js';
 
-class AmountWidget {
+class AmountWidget extends BaseWidget{
   constructor(element) {
+    super(element, settings.amountWidget.defaultValue);
+
     const thisWidget = this;
 
     thisWidget.getElements(element);
-    thisWidget.setValue(thisWidget.input.value || settings.amountWidget.defaultValue);
+
     thisWidget.initActions();
+
     //console.log('AmountWidget: ', thisWidget);
     //console.log('constructor arguments:', element);
   }
 
-  getElements(element) {
+  getElements() {
     const thisWidget = this;
 
-    thisWidget.element = element;
-    thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
-    thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
-    thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
-    //console.log(thisWidget.input.value);
+    //thisWidget.dom.wrapper = element; -> BaseWidget will take care of this
+    thisWidget.dom.input = thisWidget.dom.wrapper.querySelector(select.widgets.amount.input);
+    thisWidget.dom.Decrease = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkDecrease);
+    thisWidget.dom.Increase = thisWidget.dom.wrapper.querySelector(select.widgets.amount.linkIncrease);
+    //console.log(thisWidget.dom.input.value);
   }
-  /* SETTING VALUE OF AMOUNT AND VALIDATION IF ITS NOT A INT */
-  setValue(value) {
+
+  isValid(value){
+    return !isNaN(value)
+      && value >= settings.amountWidget.defaultMin
+      && value <= settings.amountWidget.defaultMax;
+  }
+
+  renderValue(){
     const thisWidget = this;
 
-    const newValue = parseInt(value);
-
-    /* TODO: Add validation */
-    if(thisWidget.value !== newValue && !isNaN(newValue)) {
-      if(newValue >= settings.amountWidget.defaultMin) {
-        if(newValue <= settings.amountWidget.defaultMax){
-          thisWidget.value = newValue;
-          //console.log(thisWidget.value);
-          thisWidget.announce();
-        }
-      }
-    }
-    thisWidget.input.value = thisWidget.value;
+    thisWidget.dom.input.value = thisWidget.value;
   }
 
   announce() {
@@ -46,20 +44,21 @@ class AmountWidget {
     const event = new CustomEvent('updated', {
       bubbles: true,
     });
-    thisWidget.element.dispatchEvent(event);
+    thisWidget.dom.wrapper.dispatchEvent(event);
   }
 
   /* CHANGING AMOUNT BASED ON  + or - widget at selecting product */
   initActions() {
     const thisWidget = this;
 
-    thisWidget.input.addEventListener('change', function () {
-      thisWidget.setValue(thisWidget.input.value);
-      console.log(thisWidget.input.value);
+    thisWidget.dom.input.addEventListener('change', function () {
+      //thisWidget.setValue(thisWidget.dom.input.value);
+      thisWidget.value = thisWidget.dom.input.value;
+      //console.log(thisWidget.dom.input.value);
     });
 
     // Listener that change amount on click minus
-    thisWidget.linkDecrease.addEventListener('click', function (event) {
+    thisWidget.dom.Decrease.addEventListener('click', function (event) {
       /* prevent default action for event */
       event.preventDefault();
 
@@ -67,7 +66,7 @@ class AmountWidget {
     });
 
     // Listener that change amount on click plus
-    thisWidget.linkIncrease.addEventListener('click', function (event) {
+    thisWidget.dom.Increase.addEventListener('click', function (event) {
       /* prevent default action for event */
       event.preventDefault();
 
