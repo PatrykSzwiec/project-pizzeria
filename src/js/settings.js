@@ -52,6 +52,7 @@ export const select = {
     hours: '.hours-amount [type="text"]',
     starters: '.order-starters',
     orderButton: '.order-confirmation [type="submit"]',
+    popup: 'popup',
   },
   nav: {
     links: '.main-nav a',
