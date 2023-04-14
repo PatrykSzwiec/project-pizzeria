@@ -186,27 +186,22 @@ class Booking {
     thisBooking.hourPicker = new HourPicker(thisBooking.dom.hourPicker);
 
     thisBooking.dom.peopleAmount.addEventListener('updated', function(){
-
+      thisBooking.resetSelectedTables();
 
     });
 
     thisBooking.dom.hoursAmount.addEventListener('updated', function(){
-
+      thisBooking.resetSelectedTables();
 
     });
 
     thisBooking.dom.datePicker.addEventListener('updated', function(){
-
+      thisBooking.resetSelectedTables();
 
     });
 
-    thisBooking.dom.hourPicker.addEventListener('updated', function(event){
-      const clickedElement = thisBooking.dom.floorPlan.querySelector('.selected');
-
-      clickedElement.classList.remove(classNames.booking.tableBooked);
-      thisBooking.selectedTables = 0;
-
-      console.log(event);
+    thisBooking.dom.hourPicker.addEventListener('updated', function(){
+      thisBooking.resetSelectedTables();
     });
 
     thisBooking.dom.wrapper.addEventListener('updated', function(){
@@ -224,28 +219,51 @@ class Booking {
 
     const clickedElement = event.target;
 
+    // Check that clickedElement contains class 'booked'
     if(clickedElement.classList.contains(classNames.booking.table)){
-
+      // get Id of the table
       const tableId = clickedElement.getAttribute(settings.booking.tableIdAttribute);
-
+      // check if there any tables already selected at selectedTables and contains 'selected' class
       if(thisBooking.selectedTables != 0 && clickedElement.classList.contains(classNames.booking.tableSelected)){
         clickedElement.classList.remove(classNames.booking.tableBooked);
         thisBooking.selectedTables = 0;
-      } else if (clickedElement.classList.contains(classNames.booking.tableBooked)){
+      }
+
+      // if table is booked return alert
+      else if (clickedElement.classList.contains(classNames.booking.tableBooked)){
         alert('This table is already booked');
-      } else {
+      }
+
+      // Check if the table is already selected
+      else if (clickedElement.classList.contains(classNames.booking.tableSelected)){
+        // If the table is already selected, remove the "selected" class
+        clickedElement.classList.remove(classNames.booking.tableSelected);
+      }
+
+      else {
         for(let table of thisBooking.dom.tables){
+          // If any table have class 'selected'
           if(table.classList.contains(classNames.booking.tableSelected)){
+            // Remove this class from every table
             table.classList.remove(classNames.booking.tableSelected);
           }
         }
+        // And add class 'selected' to clicked table
         clickedElement.classList.add(classNames.booking.tableSelected);
         thisBooking.selectedTable = tableId;
         console.log('thisBooking.selectedTable',thisBooking.selectedTable);
       }
     }
 
-
+  }
+  /* Method to reset selected table after update at date/hour/hours amount/people amount */
+  resetSelectedTables() {
+    // Select all tables with class 'selected'
+    const selectedTables = document.querySelectorAll(select.booking.selected);
+    selectedTables.forEach(table => {
+      // Remove class 'selected' from every table'
+      table.classList.remove(classNames.booking.tableSelected);
+    });
   }
 }
 
