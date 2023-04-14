@@ -22,7 +22,7 @@ class Booking {
     const endDateParam = settings.db.dateEndParamKey + '=' + utils.dateToStr(thisBooking.datePicker.maxDate);
 
     const params = {
-      booking: [
+      bookings: [
         startDateParam,
         endDateParam,
       ],
@@ -40,8 +40,8 @@ class Booking {
     //console.log('getData params', params);
 
     const urls = {
-      bookings:       settings.db.url + '/' + settings.db.booking
-                                           + '?' + params.booking.join('&'),
+      bookings:       settings.db.url + '/' + settings.db.bookings
+                                           + '?' + params.bookings.join('&'),
       eventsCurrent: settings.db.url + '/' + settings.db.event
                                            + '?' + params.eventsCurrent.join('&'),
       eventsRepeat:  settings.db.url + '/' + settings.db.event
@@ -175,6 +175,14 @@ class Booking {
     thisBooking.dom.tables = thisBooking.dom.wrapper.querySelectorAll(select.booking.tables);
 
     thisBooking.dom.floorPlan = thisBooking.dom.wrapper.querySelector(select.booking.floorPlan);
+
+    thisBooking.dom.form = thisBooking.dom.wrapper.querySelector(select.booking.form);
+    thisBooking.dom.phone = thisBooking.dom.wrapper.querySelector(select.booking.phone);
+    thisBooking.dom.address = thisBooking.dom.wrapper.querySelector(select.booking.address);
+    thisBooking.dom.ppl = thisBooking.dom.wrapper.querySelector(select.booking.ppl);
+    thisBooking.dom.hours = thisBooking.dom.wrapper.querySelector(select.booking.hours);
+    thisBooking.dom.starters = thisBooking.dom.wrapper.querySelector(select.booking.starters);
+    thisBooking.dom.orderButton = thisBooking.dom.wrapper.querySelector(select.booking.orderButton);
   }
 
   initWidgets(){
@@ -211,6 +219,14 @@ class Booking {
 
     thisBooking.dom.floorPlan.addEventListener('click', function(event){
       thisBooking.initTables(event);
+    });
+
+    thisBooking.dom.form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      thisBooking.sendBooking();
+      for(let table of thisBooking.dom.tables){
+        table.classList.remove(classNames.booking.tableSelected);
+      }
     });
   }
 
@@ -264,6 +280,46 @@ class Booking {
       // Remove class 'selected' from every table'
       table.classList.remove(classNames.booking.tableSelected);
     });
+  }
+
+  sendBooking(){
+    const thisBooking = this;
+
+    // Connecting to app.json bookings {} object
+    const url = settings.db.url + '/' + settings.db.bookings;
+
+    // Creating const which sets parameteters which will be send as order
+    const payload = {
+      date: thisBooking.date,
+      hour: thisBooking.hourPicker.value,
+      table: parseInt(thisBooking.selectedTable),
+      duration: parseInt(thisBooking.dom.hours.value),
+      ppl: parseInt(thisBooking.dom.ppl.value),
+      phone: thisBooking.dom.phone.value,
+      address: thisBooking.dom.address.value,
+      starters: [],
+    };
+
+    thisBooking.makeBooked(
+      payload.date,
+      payload.hour,
+      payload.duration,
+      payload.table
+    );
+
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    };
+    fetch(url, options)
+      .then(function(response){
+        return response.json();
+      }).then(function(parsedResponse){
+        console.log('parsedResponse: ', parsedResponse);
+      });
   }
 }
 

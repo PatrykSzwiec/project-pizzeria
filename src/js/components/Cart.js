@@ -68,7 +68,7 @@ class Cart {
       thisCart.clearCart();
     });
   }
-  /* SENDING ORDER BY POST TO app.json order{} WITHH DATA AT payload VARIABLE */
+  /* SENDING ORDER BY POST TO app.json order{} WITH DATA AT payload VARIABLE */
   sendOrder() {
     const thisCart = this;
     // Connecting to app.json orders {} object
