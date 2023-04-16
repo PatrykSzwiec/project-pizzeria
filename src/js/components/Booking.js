@@ -245,11 +245,47 @@ class Booking {
 
     thisBooking.dom.form.addEventListener('submit', function (event) {
       event.preventDefault();
+
+      // Get all table elements
+      const tableElements = document.querySelectorAll(select.booking.tables);
+
+      // Convert NodeList to array
+      const tables = Array.from(tableElements);
+      // Check if any table has been selected
+      const selectedTable = tables.find(table => table.classList.contains(classNames.booking.tableSelected));
+      if (!selectedTable) {
+        return;
+      }
+
+      // If a table has been selected, proceed with sending the booking
       thisBooking.sendBooking();
-      for(let table of thisBooking.dom.tables){
+
+      // Reset selected tables and form
+      for (let table of thisBooking.dom.tables) {
         table.classList.remove(classNames.booking.tableSelected);
       }
-      thisBooking.dom.form.reset();
+
+      thisBooking.placeholder = {
+        phone: 'Phone number',
+        email: 'Email address',
+      };
+
+      // Clear form fields
+      const formFields = thisBooking.dom.form.elements;
+      for (let i = 0; i < formFields.length; i++) {
+        const fieldName = formFields[i].name;
+        if (fieldName === 'people') {
+          formFields[i].value = '1';
+        } else if (fieldName === 'hours') {
+          formFields[i].value = '1';
+        } else if (fieldName === 'phone' || fieldName === 'email') {
+          formFields[i].value = '';
+          formFields[i].placeholder = thisBooking.placeholder[formFields[i].name];
+        }
+      }
+
+      // Update the DOM to reflect any changes
+      thisBooking.updateDOM();
     });
   }
 
