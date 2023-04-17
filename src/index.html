@@ -253,8 +253,13 @@
             </div>
           </div>
           <div class="order-confirmation">
-            <input type="tel" name="phone" placeholder="Your phone">
-            <input type="text" name="address" placeholder="Your address">
+            <input type="tel" name="phone" placeholder="Your phone"
+              required pattern="\+\d{2}-\d{3}-\d{3}-\d{3}"
+              title="Please enter a valid phone number in the format +xx-xxx-xxx-xxx">
+
+            <input type="text" name="address" placeholder="Your address"
+              pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+              title="Please enter a valid email address">
             <button type="submit" class="btn-secondary">Book table</button>
           </div>
         </form>
