@@ -58,7 +58,7 @@ export const select = {
   },
   home: {
     carouselPlugin: '.main-carousel',
-    links: '.links a',
+    links: '.link a',
   },
   nav: {
     links: '.main-nav a',

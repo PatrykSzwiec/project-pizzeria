@@ -165,19 +165,28 @@ const app = {
     const homeContainer = document.querySelector(select.containerOf.home);
     thisApp.home = new Home(homeContainer);
 
+    // Select all links at home section using querySelectorAll
     thisApp.links = document.querySelectorAll(select.home.links);
-    console.log(thisApp.links);
+
     for(let link of thisApp.links){
-      link.addEventListener('click', function(event){
-        const clickedElement = this;
-        event.preventDefault();
+      // Find the closest ancestor element with .link class
+      const linkContainer = link.closest('.link');
 
-        const id = clickedElement.getAttribute('href').replace('#', '');
+      if (linkContainer) {
+        linkContainer.addEventListener('click', function(event){
+          event.preventDefault();
 
-        thisApp.activatePage(id);
-
-        window.location.hash = '#/' + id;
-      });
+          const href = link.getAttribute('href');
+          if (href.startsWith('#')) {
+            // Create const to extract a part of string (1 mean first string for example booking)
+            const id = href.substring(1);
+            thisApp.activatePage(id);
+            window.location.hash = '#/' + id;
+          } else {
+            window.location.href = href;
+          }
+        });
+      }
     }
   },
   init: function(){
@@ -196,32 +205,3 @@ const app = {
 };
 
 app.init();
-
-
-/*
-const discounts = {
-  'foo': {
-    value: 15,
-    count: 1,
-    minValue: 20,
-  },
-  'bar': {
-    value: 15,
-    minValue: 20,
-  },
-  fooBar: {
-    value: 15,
-    count: 3,
-  }
-};
-
-if (discounts.foo in 'count') {
-  if (discounts.foo.count <= 0.) {
-    throw new Error('Invalid'); //kod został użyty 
-  }
-}
-
-order.placeOrder();
-
-discounts.foo.count--;
-*/
