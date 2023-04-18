@@ -148,8 +148,8 @@ class Cart {
     // Check if the totalNumber of products in Cart is 0 then deliveryFee is 0 and discount is 0
     if (thisCart.totalNumber > 0) {
       thisCart.dom.deliveryFee.innerHTML = deliveryFee;
-      thisCart.dom.discount.innerHTML = discount;
-      thisCart.totalPrice = thisCart.subtotalPrice + deliveryFee; //TO DO discount
+      //thisCart.dom.discount.innerHTML = discount; 
+      thisCart.totalPrice = thisCart.subtotalPrice + deliveryFee; //TO DO discount !!!
     } else {
       thisCart.dom.deliveryFee.innerHTML = 0; // reset delivery price to 0
       thisCart.dom.discount.innerHTML = 0; // reset discount to 0
